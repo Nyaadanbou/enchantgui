@@ -1,16 +1,16 @@
 package cc.mewcraft.enchantment.gui.config
 
-import cc.mewcraft.enchantment.gui.EnchantGuiPlugin
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import cc.mewcraft.enchantment.gui.api.UiEnchantPlugin
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import org.bukkit.Material
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class EnchantGuiSettings
 @Inject constructor(
-    plugin: EnchantGuiPlugin,
+    plugin: UiEnchantPlugin,
 ) {
     val guiLayout: Array<String> = plugin.config.getStringList("gui.layout").toTypedArray()
 

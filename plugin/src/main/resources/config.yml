@@ -17,7 +17,7 @@ gui:
       - <#bcff9a>▪ <#ddecee>适用于：<#bcff9a><enchantment_target_list>
       - <#bcff9a>▪ <#ddecee>等级：<#bcff9a><enchantment_level_min> <color:#ddecee>-</color> <enchantment_level_max>
       - ''
-      - <conflicts>
+      - <conflict>
       - <charging>
       - <obtaining>
       - ''

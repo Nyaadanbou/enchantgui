@@ -1,17 +1,18 @@
 package cc.mewcraft.enchantment.gui.command
 
-import cc.mewcraft.enchantment.gui.EnchantGuiPlugin
+import cc.mewcraft.enchantment.gui.api.UiEnchantPlugin
 import cc.mewcraft.enchantment.gui.gui.EnchantMenu
-import cc.mewcraft.mewcore.command.SimpleCommands
+import cc.mewcraft.spatula.command.SimpleCommands
 import cloud.commandframework.bukkit.parsers.PlayerArgument
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import org.bukkit.entity.Player
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
-class PluginCommands @Inject constructor(
-    plugin: EnchantGuiPlugin,
-) : SimpleCommands<EnchantGuiPlugin>(plugin) {
+class EnchantGuiCommands
+@Inject constructor(
+    plugin: UiEnchantPlugin,
+) : SimpleCommands<UiEnchantPlugin>(plugin) {
     override fun prepareAndRegister() {
         // Prepare commands
         registry.prepareCommand(

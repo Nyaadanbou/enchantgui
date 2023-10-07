@@ -1,18 +1,18 @@
 package cc.mewcraft.enchantment.gui.gui
 
-import cc.mewcraft.enchantment.gui.api.ChargeableUiEnchant
+import cc.mewcraft.enchantment.gui.api.Chargeable
 import cc.mewcraft.enchantment.gui.api.UiEnchant
 import cc.mewcraft.enchantment.gui.config.EnchantGuiSettings
 import cc.mewcraft.enchantment.gui.util.*
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import xyz.xenondevs.invui.item.ItemProvider
 import xyz.xenondevs.invui.item.ItemWrapper
 import xyz.xenondevs.invui.item.builder.ItemBuilder
 import java.time.Duration
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * This class provides loading cache that takes [UiEnchant] as key and returns an array of [ItemProvider].
@@ -70,7 +70,7 @@ class ItemProviderCache
                 }
 
                 // Make the lore that describes charging
-                if (enchant is ChargeableUiEnchant) {
+                if (enchant is Chargeable) {
                     Lores.replacePlaceholder("<charging>", loreFormat, settings.loreFormatCharging)
                     Lores.replacePlaceholder("<enchantment_charges_fuel_item>", loreFormat, enchant.fuel)
                     Lores.replacePlaceholder("<enchantment_charges_consume_amount>", loreFormat, enchant.fuelConsume[level]?.let { Numbers.format(it.toDouble()) } ?: NULL)

@@ -7,18 +7,20 @@ import org.bukkit.inventory.ItemStack
 /**
  * A UiEnchant that is chargeable.
  */
-class ChargeableUiEnchant(
-    baseEnchant: UiEnchant,
+
+private val MINI_MESSAGE_STRICT = MiniMessage.builder().strict(true).build() // make it strict to generate closed tags
+
+class Chargeable(
+    base: UiEnchant,
     fuelItem: ItemStack, // it's the name of fuel item in MiniMessage string representation
     fuelConsumeMapping: (Int) -> Int,
     fuelRechargeMapping: (Int) -> Int,
     maximumFuelMapping: (Int) -> Int,
-) : UiEnchant by baseEnchant {
+) : UiEnchant by base {
     val fuel: String = fuelItem.let {
-        val itemMeta = fuelItem.itemMeta
-        val component = if (itemMeta.hasDisplayName()) itemMeta.displayName() else Component.translatable(fuelItem)
-        val miniMessage = MiniMessage.builder().strict(true).build() // make it strict to generate closed tags
-        component?.let(miniMessage::serialize) ?: ""
+        val itemMeta = it.itemMeta
+        val component = if (itemMeta?.hasDisplayName() == true) itemMeta.displayName() else Component.translatable(fuelItem)
+        component?.let(MINI_MESSAGE_STRICT::serialize) ?: ""
     }
     val fuelConsume: Map<Int, Int> = levelScale(fuelConsumeMapping)
     val fuelRecharge: Map<Int, Int> = levelScale(fuelRechargeMapping)

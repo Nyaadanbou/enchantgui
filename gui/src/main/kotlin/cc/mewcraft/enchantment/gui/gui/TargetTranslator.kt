@@ -1,14 +1,14 @@
 package cc.mewcraft.enchantment.gui.gui
 
-import cc.mewcraft.enchantment.gui.EnchantGuiPlugin
+import cc.mewcraft.enchantment.gui.api.UiEnchantPlugin
 import cc.mewcraft.enchantment.gui.api.UiEnchantTarget
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class TargetTranslator
 @Inject constructor(
-    private val plugin: EnchantGuiPlugin,
+    private val plugin: UiEnchantPlugin,
 ) {
     fun translate(target: UiEnchantTarget): String =
         plugin.languages.of("item_target_${target.name.lowercase()}").plain()

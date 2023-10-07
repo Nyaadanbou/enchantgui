@@ -2,9 +2,6 @@ package cc.mewcraft.enchantment.gui.api
 
 import com.google.common.reflect.ClassPath
 import net.kyori.adventure.key.Key
-import org.intellij.lang.annotations.Subst
-import java.io.IOException
-import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -19,18 +16,11 @@ object UiEnchantProvider {
     /**
      * Initializes this provider.
      */
-    @Throws(
-        IOException::class,
-        NoSuchMethodException::class,
-        InvocationTargetException::class,
-        InstantiationException::class,
-        IllegalAccessException::class
-    )
     @Suppress("UNCHECKED_CAST")
     fun initialize(plugin: UiEnchantPlugin) {
         // Load all adapter classes at runtime
         val adapterClazz = ClassPath
-            .from(plugin.clazzLoader)
+            .from(plugin.classloader)
             .getTopLevelClasses("cc.mewcraft.enchantment.gui.adapter")
             .map { it.load() }
             .filter { UiEnchantAdapter::class.java.isAssignableFrom(it) }
@@ -55,7 +45,7 @@ object UiEnchantProvider {
         return elements.containsKey(key)
     }
 
-    private fun containsKey(@Subst("blast_mining") key: String): Boolean {
+    private fun containsKey(key: String): Boolean {
         return containsKey(Key.key(Key.MINECRAFT_NAMESPACE, key))
     }
 
@@ -64,7 +54,7 @@ object UiEnchantProvider {
         return elements[key]
     }
 
-    operator fun get(@Subst("blast_mining") key: String): UiEnchant? {
+    operator fun get(key: String): UiEnchant? {
         return elements[Key.key(Key.MINECRAFT_NAMESPACE, key)]
     }
 

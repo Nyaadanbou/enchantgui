@@ -1,9 +1,8 @@
 package cc.mewcraft.enchantment.gui.adapter
 
 import cc.mewcraft.enchantment.gui.api.*
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import net.kyori.adventure.key.Key
+import org.bukkit.Bukkit
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import su.nightexpress.excellentenchants.enchantment.EnchantRegistry
@@ -11,11 +10,10 @@ import su.nightexpress.excellentenchants.enchantment.impl.ExcellentEnchant
 import su.nightexpress.excellentenchants.enchantment.type.FitItemType
 import su.nightexpress.excellentenchants.enchantment.type.ObtainType
 
+import javax.inject.Singleton
+
 @Singleton
-class ExcellentEnchantAdapter
-@Inject constructor(
-    private val plugin: UiEnchantPlugin,
-) : UiEnchantAdapter<ExcellentEnchant, FitItemType> {
+class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, FitItemType> {
     override fun initialize() {
         if (!canInitialize()) {
             return
@@ -26,7 +24,7 @@ class ExcellentEnchantAdapter
     }
 
     override fun canInitialize(): Boolean {
-        return plugin.isPluginPresent("ExcellentEnchants")
+        return Bukkit.getPluginManager().getPlugin("ExcellentEnchants") != null
     }
 
     override fun adaptEnchantment(rawEnchant: ExcellentEnchant): UiEnchant {
@@ -97,7 +95,7 @@ class ExcellentEnchantAdapter
         }
 
         return when {
-            rawEnchant.isChargesEnabled -> ChargeableUiEnchant(
+            rawEnchant.isChargesEnabled -> Chargeable(
                 uiEnchant,
                 rawEnchant.chargesFuel.item,
                 rawEnchant::getChargesConsumeAmount,

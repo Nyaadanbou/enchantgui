@@ -5,9 +5,6 @@ package cc.mewcraft.enchantment.gui.api
  *
  * All implementations should be put in the package: cc.mewcraft.enchantment.gui.adapter.
  *
- * The following instances will be injected upon instance construction of this class:
- *  * [UiEnchantPlugin]
- *
  * @param <E> enchantment type
  * @param <T> enchantment target type
  */

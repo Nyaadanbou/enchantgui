@@ -2,8 +2,8 @@ package cc.mewcraft.enchantment.gui
 
 import cc.mewcraft.enchantment.gui.api.UiEnchantPlugin
 import cc.mewcraft.enchantment.gui.api.UiEnchantProvider
-import cc.mewcraft.enchantment.gui.command.PluginCommands
-import cc.mewcraft.mewcore.message.Translations
+import cc.mewcraft.enchantment.gui.command.EnchantGuiCommands
+import cc.mewcraft.spatula.message.Translations
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -33,9 +33,7 @@ class EnchantGuiPlugin : UiEnchantPlugin() {
         // Load modding languages
         try {
             Languages.getInstance().loadLanguage(
-                "zh_cn",
-                getBundledFile("lang/modding/zh_cn.json"),
-                StandardCharsets.UTF_8
+                "zh_cn", getBundledFile("lang/modding/zh_cn.json"), StandardCharsets.UTF_8
             )
         } catch (e: IOException) {
             slF4JLogger.error("Failed to load language files", e)
@@ -46,7 +44,7 @@ class EnchantGuiPlugin : UiEnchantPlugin() {
 
         // Initialize commands
         try {
-            val pluginCommands = injector.getInstance(PluginCommands::class.java)
+            val pluginCommands = injector.getInstance(EnchantGuiCommands::class.java)
             pluginCommands.prepareAndRegister()
         } catch (e: Exception) {
             slF4JLogger.error("Failed to initialize commands", e)

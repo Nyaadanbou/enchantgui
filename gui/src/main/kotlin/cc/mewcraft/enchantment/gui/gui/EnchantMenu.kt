@@ -1,13 +1,12 @@
 package cc.mewcraft.enchantment.gui.gui
 
-import cc.mewcraft.enchantment.gui.EnchantGuiPlugin
 import cc.mewcraft.enchantment.gui.api.UiEnchant
+import cc.mewcraft.enchantment.gui.api.UiEnchantPlugin
 import cc.mewcraft.enchantment.gui.api.UiEnchantProvider
 import cc.mewcraft.enchantment.gui.config.EnchantGuiSettings
 import cc.mewcraft.enchantment.gui.util.miniMessage
 import cc.mewcraft.enchantment.gui.util.translatable
 import cc.mewcraft.enchantment.gui.util.wrapper
-import com.google.inject.Inject
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Material
@@ -25,11 +24,12 @@ import xyz.xenondevs.invui.item.Item
 import xyz.xenondevs.invui.item.builder.ItemBuilder
 import xyz.xenondevs.invui.item.impl.SimpleItem
 import xyz.xenondevs.invui.window.Window
+import javax.inject.Inject
 
 class EnchantMenu
 @Inject constructor(
     private val cache: ItemProviderCache,
-    private val plugin: EnchantGuiPlugin,
+    private val plugin: UiEnchantPlugin,
     private val settings: EnchantGuiSettings,
 
     backItem: BackItem,

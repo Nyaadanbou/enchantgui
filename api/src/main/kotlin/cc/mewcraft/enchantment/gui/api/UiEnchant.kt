@@ -13,14 +13,11 @@ import org.bukkit.inventory.ItemStack
  * for the items in the GUI.
  */
 interface UiEnchant : Keyed /* Keyed is used to identify enchantments */ {
-    // --- Display
-    /**
-     * @return name of this enchantment, without levels
-     */
+    // --- Display ---
     fun name(): String
 
     // Notes: displayName and description vary depending on the enchantment level.
-    // Hence, these two methods return a map where key is the enchantment level.
+    // Therefore, these two methods return a map where key is the enchantment level.
     fun displayName(): Map<Int, String>
     fun description(): Map<Int, List<String>>
 
@@ -29,6 +26,7 @@ interface UiEnchant : Keyed /* Keyed is used to identify enchantments */ {
      *
      * @param func a mapper transforming certain level to corresponding value
      * @param <T>  the value type
+     *
      * @return a map containing all values of each level
     </T> */
     fun <T> levelScale(func: (Int) -> T): Map<Int, T> {
@@ -37,21 +35,21 @@ interface UiEnchant : Keyed /* Keyed is used to identify enchantments */ {
         }
     }
 
-    // --- Target
+    // --- Target ---
     fun canEnchantment(item: ItemStack): Boolean
     fun enchantmentTargets(): List<UiEnchantTarget>
 
-    // --- Rarity
+    // --- Rarity ---
     fun rarity(): UiEnchantRarity
 
-    // --- Obtaining
+    // --- Obtaining ---
     fun enchantingChance(): Double
     fun villagerTradeChance(): Double
     fun lootGenerationChance(): Double
     fun fishingChance(): Double
     fun mobSpawningChance(): Double
 
-    // --- Conflicts
+    // --- Conflicts ---
     /**
      * Returns a list of non-null enchants that conflict with this enchant.
      *
@@ -64,7 +62,7 @@ interface UiEnchant : Keyed /* Keyed is used to identify enchantments */ {
     fun conflict(): List<UiEnchant>
     fun conflictsWith(other: Enchantment): Boolean
 
-    // --- Min/Max enchantment levels
+    // --- Min/Max enchantment levels ---
     fun minimumLevel(): Int
     fun maximumLevel(): Int
 }

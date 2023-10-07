@@ -1,24 +1,15 @@
-plugins {
-    id("cc.mewcraft.deploy-conventions")
-    id("cc.mewcraft.paper-plugins")
-}
-
-project.ext.set("name", "EnchantGui")
-
 dependencies {
-    // dependent module
-    implementation(project(":enchantgui:api"))
-    implementation(project(":enchantgui:provider"))
+    // dependent modules
+    compileOnly(project(":enchantgui:api"))
+    compileOnly(project(":enchantgui:provider"))
 
-    // the server api
+    // server
     compileOnly(libs.server.paper)
 
-    // libs present as other plugins
+    // internal
+    compileOnly(libs.guice)
     compileOnly(libs.helper)
-    compileOnly(project(":mewcore"))
-
-    // libs to be shaded
-    implementation(libs.bundles.invui) {
-        exclude("org.jetbrains.kotlin")
-    }
+    compileOnly(project(":spatula:bukkit:gui"))
+    compileOnly(project(":spatula:bukkit:command"))
+    compileOnly(project(":spatula:bukkit:message"))
 }
