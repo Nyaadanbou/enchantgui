@@ -15,11 +15,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * This class provides loading cache that takes [UiEnchant] as key and returns an array of [ItemProvider].
- * The returned [ItemProvider] then can be used to construct the content of gui for display purposes.
+ * This class provides a function [get] which takes [UiEnchant] as key and returns an array of [ItemProvider].
+ * The returned [ItemProvider] then can be used to construct the content of [EnchantMenu] for display purposes.
  */
 @Singleton
-class ItemProviderCache
+class EnchantIcons
 @Inject constructor(
     private val settings: EnchantGuiSettings,
     private val targetTranslator: TargetTranslator,

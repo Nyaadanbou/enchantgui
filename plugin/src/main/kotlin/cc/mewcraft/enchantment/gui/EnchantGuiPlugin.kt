@@ -11,13 +11,16 @@ import xyz.xenondevs.inventoryaccess.component.i18n.AdventureComponentLocalizer
 import xyz.xenondevs.inventoryaccess.component.i18n.Languages
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+import javax.inject.Singleton
 
 class EnchantGuiPlugin : UiEnchantPlugin() {
     inner class PluginModule : AbstractModule() {
         override fun configure() {
             bind(UiEnchantPlugin::class.java).toInstance(this@EnchantGuiPlugin)
             bind(EnchantGuiPlugin::class.java).toInstance(this@EnchantGuiPlugin)
-            bind(Translations::class.java).toProvider { Translations(this@EnchantGuiPlugin, "lang/message") }
+            bind(Translations::class.java).toProvider {
+                Translations(this@EnchantGuiPlugin, "lang/message")
+            }.`in`(Singleton::class.java)
         }
     }
 
@@ -25,6 +28,7 @@ class EnchantGuiPlugin : UiEnchantPlugin() {
         saveResourceRecursively("lang")
         saveDefaultConfig()
         reloadConfig()
+
         injector = Guice.createInjector(PluginModule())
 
         // Load message languages
@@ -33,7 +37,9 @@ class EnchantGuiPlugin : UiEnchantPlugin() {
         // Load modding languages
         try {
             Languages.getInstance().loadLanguage(
-                "zh_cn", getBundledFile("lang/modding/zh_cn.json"), StandardCharsets.UTF_8
+                "zh_cn",
+                getBundledFile("lang/modding/zh_cn.json"),
+                StandardCharsets.UTF_8
             )
         } catch (e: IOException) {
             slF4JLogger.error("Failed to load language files", e)
@@ -44,8 +50,7 @@ class EnchantGuiPlugin : UiEnchantPlugin() {
 
         // Initialize commands
         try {
-            val pluginCommands = injector.getInstance(EnchantGuiCommands::class.java)
-            pluginCommands.prepareAndRegister()
+            injector.getInstance(EnchantGuiCommands::class.java).prepareAndRegister()
         } catch (e: Exception) {
             slF4JLogger.error("Failed to initialize commands", e)
         }

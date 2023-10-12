@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 class EnchantMenu
 @Inject constructor(
-    private val cache: ItemProviderCache,
+    private val cache: EnchantIcons,
     private val plugin: UiEnchantPlugin,
     private val settings: EnchantGuiSettings,
 
