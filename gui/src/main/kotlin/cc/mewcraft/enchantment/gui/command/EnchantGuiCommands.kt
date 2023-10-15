@@ -11,12 +11,12 @@ import javax.inject.Singleton
 @Singleton
 class EnchantGuiCommands
 @Inject constructor(
-    plugin: UiEnchantPlugin,
-) : SimpleCommands<UiEnchantPlugin>(plugin) {
-    override fun prepareAndRegister() {
+    private val plugin: UiEnchantPlugin,
+) : SimpleCommands(plugin) {
+    override fun registerCommands() {
         // Prepare commands
-        registry.prepareCommand(
-            registry
+        commandRegistry().addCommand(
+            commandRegistry()
                 .commandBuilder("enchantgui")
                 .literal("open")
                 .permission("enchantgui.command.open")
@@ -29,12 +29,13 @@ class EnchantGuiCommands
                         it.sender as Player
                     } else return@handler
 
+                    // TODO reuse menu instances for the same player
                     plugin.injector.getInstance(EnchantMenu::class.java).showMenu(viewer)
 
                 }.build()
         )
-        registry.prepareCommand(
-            registry
+        commandRegistry().addCommand(
+            commandRegistry()
                 .commandBuilder("enchantgui")
                 .literal("reload")
                 .permission("enchantgui.command.reload")
@@ -47,6 +48,6 @@ class EnchantGuiCommands
         )
 
         // Register commands
-        registry.registerCommands()
+        commandRegistry().registerCommands()
     }
 }

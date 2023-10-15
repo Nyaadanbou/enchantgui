@@ -50,7 +50,7 @@ class EnchantGuiPlugin : UiEnchantPlugin() {
 
         // Initialize commands
         try {
-            injector.getInstance(EnchantGuiCommands::class.java).prepareAndRegister()
+            injector.getInstance(EnchantGuiCommands::class.java).registerCommands()
         } catch (e: Exception) {
             slF4JLogger.error("Failed to initialize commands", e)
         }
