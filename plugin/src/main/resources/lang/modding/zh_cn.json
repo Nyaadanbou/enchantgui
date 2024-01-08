@@ -1,19 +1,15 @@
 {
   "general.empty": "",
-
-  "menu.action.preview": "",
-
   "menu.enchantment.layout.title": "附魔图鉴",
   "menu.enchantment.layout.previous_page": "上一页",
   "menu.enchantment.layout.next_page": "下一页",
-
   "menu.enchantment.icon.display_name": "{0}",
-  "menu.enchantment.icon.description.list": "<gray>{0}",
+  "menu.enchantment.icon.description": "<gray>{0}",//
   "menu.enchantment.icon.rarity": "<#bcff9a>▪ <#ddecee>稀有度: <white>{0}",
   "menu.enchantment.icon.target": "<#bcff9a>▪ <#ddecee>适用于：<#bcff9a>{0}",
   "menu.enchantment.icon.level": "<#bcff9a>▪ <#ddecee>等级：<#bcff9a>{0} <color:#ddecee>-</color> {1}",
   "menu.enchantment.icon.conflict.title": "<#ff9a9a>▪ <b>冲突",
-  "menu.enchantment.icon.conflict.target": "<#ff9a9a> {0}",
+  "menu.enchantment.icon.conflict.item": "<#ff9a9a> {0}",//
   "menu.enchantment.icon.charging.title": "<#d39aff>▪ <b>充能",
   "menu.enchantment.icon.charging.fuel": "<#ddecee>  充能物品：<#d39aff>{0}",
   "menu.enchantment.icon.charging.consume_amount": "<#ddecee>  每次消耗：<#d39aff>-{0}⚡",
@@ -24,5 +20,6 @@
   "menu.enchantment.icon.obtaining.villager": "<#ddecee>  村民交易：<#9af7ff>{0}%",
   "menu.enchantment.icon.obtaining.loot_generation": "<#ddecee>  战利品箱：<#9af7ff>{0}%",
   "menu.enchantment.icon.obtaining.fishing": "<#ddecee>  钓鱼：<#9af7ff>{0}%",
-  "menu.enchantment.icon.obtaining.mob_spawning": "<#ddecee>  怪物：<#9af7ff>{0}%"
+  "menu.enchantment.icon.obtaining.mob_spawning": "<#ddecee>  怪物：<#9af7ff>{0}%",
+  "menu.enchantment.icon.preview": "<aqua>[*] <#a5ff9a>点击切换预览等级"
 }

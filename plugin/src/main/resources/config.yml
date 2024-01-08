@@ -50,21 +50,23 @@ gui:
 # 设计上，概念越简单越好
 
 # 第一，我们规定，这里出现的所有字符串都是 translation key，不存在 “plain values”
-# 也就是说，这里的所有字符串都会被转换成 translatable components
+# 也就是说，这里的所有字符串都会被转换成 translatable components 然后应用到物品上
 
 # 第二，这里只写一行不代表最终呈现给客户端的也只有一行
-# 根据实现，一行可能会经过“复制”以跨越到多行
-# 这里的一行也只是每一行所呈现的样式
+# 根据具体的实现，一行可能会经过“复制”以跨越到多行
 
-# 第三，可用的 translation key 是 hardcode，客户端无法决定 key 本身的值
-# 这有利于程序内部更直接的去做查询和替换
-# 不然还得单独维护一个数据结构去做查询
+# 第三，支持 arguments 的 translation key 都是 hardcode
+# 终端用户不能光从配置文件层面，就使得一个 TranslatableComponent 有可用的 arguments
+# 这主要是方便程序更直接的去做查询和替换，不然还得单独维护一个数据结构去做查询
 
 # 第四，这相当于一个模板，用来指定文字出现在哪，而不指定文字的具体样式
-# 这也相当于同时定义了所有可用的 translatable
+# 所有的文字内容/样式都应该交由 TranslatableComponent 读取的资源文件决定
 
-# GUI 相关设置
-gui1:
+# 第五，终端用户可以添加任意新的 translation key
+# 要使其生效，只需要在 TranslatableComponent 读取的资源文件那里添加对应的条目即可
+# 例如，你可以在这里写一个 "g2213swo.zako.desu"，然后资源文件那里也写个对应的条目即可
+
+gui_i18n:
   icon:
     material: enchanted_book
     name: menu.enchantment.icon.display_name
@@ -76,7 +78,7 @@ gui1:
       - menu.enchantment.icon.level
       - general.empty
       - menu.enchantment.icon.conflict.title
-      - menu.enchantment.icon.conflict.target
+      - menu.enchantment.icon.conflict.item
       - menu.enchantment.icon.charging.title
       - menu.enchantment.icon.charging.fuel_item
       - menu.enchantment.icon.charging.consume_amount
@@ -89,7 +91,7 @@ gui1:
       - menu.enchantment.icon.obtaining.fishing
       - menu.enchantment.icon.obtaining.mob_spawning
       - general.empty
-      - menu.action.preview
+      - menu.enchantment.icon.preview
   layout:
     - "# # # # # # # # #"
     - "# x x x x x # i #"

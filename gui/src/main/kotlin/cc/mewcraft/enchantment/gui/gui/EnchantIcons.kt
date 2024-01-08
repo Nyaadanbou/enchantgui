@@ -11,6 +11,8 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TranslatableComponent
+import net.kyori.adventure.text.TranslationArgument
 import xyz.xenondevs.invui.item.ItemProvider
 import xyz.xenondevs.invui.item.ItemWrapper
 import xyz.xenondevs.invui.item.builder.ItemBuilder
@@ -106,17 +108,118 @@ class EnchantIcons
         }
     }
 
-    fun poc() {
-        // 先读取模板
-        // 把所有的 string 作为 translation key 转换成 Translatable（注意这里假设每一行就是一个 key）
-        // 其中，string 作为 map key，构建的 Translatable 作为 map value
-        // 然后将所有的数据放入一个 map
+    ///////////////////////////////////////////////
+    ////////////////// i18n PoC ///////////////////
+    ///////////////////////////////////////////////
 
-        // 遍历 map，根据可用的数据，为每个 Translatable 添加 args
-        // 注意这里需要替换原本的 map value，因为所有 Component 都是 immutable
+    // TODO 应该封装成一个 class 供其他项目复用
+    // FIXME 下面是新的 i18n 实现，没测 runtime，仅供参考
 
-        // 构建物品的时候，根据物品的模板，将模板
+    private fun poc(enchant: UiEnchant, level: Int) {
+        // 给定如下参数:
+        // - UiEnchant (创建 TranslationArgument 所需要的任意对象)
+        // - LoreFormat (所有会用到的 translation key 以及 lore 的 format)
+        // 我们的任务是根据 LoreFormat 和 UiEnchant
+        // 生成一个 List<TranslatableComponent>
+        // 用于设置物品的 lore
+
+        /*
+        第一步：读取所有的 TranslatableComponent
+
+        先读取配置文件里的物品模板
+        把所有的 string 看成是 translation key，然后将它们转换成 TranslatableComponent（注意这里假设每一行有且仅有一个 key）
+        其中，string 将作为 map key；由其构建的 TranslatableComponent 将作为 map value
+        然后将所有的数据放入一个 map (接下来叫这个 map 为 “registry”)
+        */
+
+        val registry = HashMap<String, TranslatableComponent>() // FIXME 如果这里用 ListMultimap，那就写个扩展函数
+        registry.put(settings.DISPLAY_NAME_FORMAT)
+        registry.put(settings.LORE_FORMAT)
+
+        /*
+        第二步：为部分 TranslatableComponent 添加 arguments
+
+        到此为止，这个 registry 就有了终端用户定义的一些 TranslatableComponent
+        但这些 TranslatableComponent 都还没有定义 arguments
+        于是接下来，我们需要给支持 arguments 的那些 TranslatableComponent 添加 arguments
+        至于那些不支持 arguments 的 TranslatableComponent - 要么是实现原本就不支持，要么是用户自己定义的新条目
+        无论是哪种情况，都不需要给它们添加 arguments，也不需要移除它们，而是让 InvUI 自己读取 .json 中的条目就行了
+        这样反倒可以让用户自行去自定义新的 i18n 条目
+        */
+
+        registry.computeIfPresent("menu.enchantment.icon.display_name") { _, v -> v.arguments(enchant.displayName()[level].miniMessage()) }
+        // FIXME span multiple lines
+        // registry.computeIfPresent("menu.enchantment.icon.description") { _, v -> v.arguments() }
+        registry.computeIfPresent("menu.enchantment.icon.rarity") { _, v -> v.arguments(enchant.rarity().name.miniMessage()) }
+        registry.computeIfPresent("menu.enchantment.icon.target") { _, v ->
+            v.arguments(enchant.enchantmentTargets()
+                .map { targetTranslator.translate(it) }
+                .reduce { t1, t2 -> "$t1, $t2" }.miniMessage()
+            )
+        }
+        registry.computeIfPresent("menu.enchantment.icon.level") { _, v ->
+            v.arguments(
+                TranslationArgument.numeric(enchant.minimumLevel()),
+                TranslationArgument.numeric(enchant.maximumLevel())
+            )
+        }
+        // FIXME span multiple lines
+        // registry.computeIfPresent("menu.enchantment.icon.conflict.item") { _, v -> v.arguments() }
+        if (enchant is Chargeable) {
+            registry.computeIfPresent("menu.enchantment.icon.charging.fuel") { _, v -> v.arguments(enchant.fuel.miniMessage()) }
+            registry.computeIfPresent("menu.enchantment.icon.conflict.consume_amount") { _, v -> v.arguments(TranslationArgument.numeric(enchant.fuelConsume[level]!!)) }
+            registry.computeIfPresent("menu.enchantment.icon.conflict.recharge_amount") { _, v -> v.arguments(TranslationArgument.numeric(enchant.fuelRecharge[level]!!)) }
+            registry.computeIfPresent("menu.enchantment.icon.conflict.max_amount") { _, v -> v.arguments(TranslationArgument.numeric(enchant.maximumFuel[level]!!)) }
+        }
+        registry.computeIfPresent("menu.enchantment.icon.obtaining.enchanting") { _, v -> v.arguments(TranslationArgument.numeric(enchant.enchantingChance())) }
+        registry.computeIfPresent("menu.enchantment.icon.obtaining.villager") { _, v -> v.arguments(TranslationArgument.numeric(enchant.villagerTradeChance())) }
+        registry.computeIfPresent("menu.enchantment.icon.obtaining.loot_generation") { _, v -> v.arguments(TranslationArgument.numeric(enchant.lootGenerationChance())) }
+        registry.computeIfPresent("menu.enchantment.icon.obtaining.fishing") { _, v -> v.arguments(TranslationArgument.numeric(enchant.fishingChance())) }
+        registry.computeIfPresent("menu.enchantment.icon.obtaining.mob_spawning") { _, v -> v.arguments(TranslationArgument.numeric(enchant.mobSpawningChance())) }
+
+        /*
+        第三步：清理 lore format，隐藏没必要呈现的内容
+        */
+        val sanitizedLoreFormat = sanitizeLoreFormat(enchant, settings.LORE_FORMAT)
+
+        /*
+        第四步：根据清理后的 lore format，生成对应的 List<TranslatableComponent>
+        */
+        val componentName = registry[settings.DISPLAY_NAME_FORMAT]!!
+        val componentLore = sanitizedLoreFormat.map { registry[it]!! } // FIXME span multiple lines, we might need flatMap
+
+        // 最后把 name 和 lore 应用到 ItemBuilder 上就行了
     }
+
+    private fun HashMap<String, TranslatableComponent>.put(key: String) {
+        put(key, Component.translatable(key))
+    }
+
+    private fun HashMap<String, TranslatableComponent>.put(keys: List<String>) {
+        keys.forEach { key -> put(key, Component.translatable(key)) }
+    }
+
+    private fun sanitizeLoreFormat(enchant: UiEnchant, format: List<String>): MutableList<String> {
+        val format1 = format.toMutableList()
+        fun sanitize(pattern: String, predicate: () -> Boolean) {
+            if (predicate.invoke()) {
+                format1.removeIf { it.contains(pattern) }
+            }
+        }
+        // 对于无法充能的附魔，隐藏充能相关的描述
+        sanitize("charging") { enchant !is Chargeable }
+        // 对于为0的出现概率，移除对应种类的描述
+        sanitize("obtaining.enchanting") { enchant.enchantingChance() <= 0 }
+        sanitize("obtaining.villager") { enchant.villagerTradeChance() <= 0 }
+        sanitize("obtaining.loot_generation") { enchant.lootGenerationChance() <= 0 }
+        sanitize("obtaining.fishing") { enchant.fishingChance() <= 0 }
+        sanitize("obtaining.mob_spawning") { enchant.mobSpawningChance() <= 0 }
+        return format1
+    }
+
+    ///////////////////////////////////////////////
+    ////////////////// i18n PoC ///////////////////
+    ///////////////////////////////////////////////
 }
 
 private const val NULL: String = "NULL"
