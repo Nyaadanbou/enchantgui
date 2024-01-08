@@ -46,3 +46,54 @@ gui:
     - "# x x x x x # s #"
     - "# < # # # > # # #"
     - "# # # # # # # # #"
+
+# 设计上，概念越简单越好
+
+# 第一，我们规定，这里出现的所有字符串都是 translation key，不存在 “plain values”
+# 也就是说，这里的所有字符串都会被转换成 translatable components
+
+# 第二，这里只写一行不代表最终呈现给客户端的也只有一行
+# 根据实现，一行可能会经过“复制”以跨越到多行
+# 这里的一行也只是每一行所呈现的样式
+
+# 第三，可用的 translation key 是 hardcode，客户端无法决定 key 本身的值
+# 这有利于程序内部更直接的去做查询和替换
+# 不然还得单独维护一个数据结构去做查询
+
+# 第四，这相当于一个模板，用来指定文字出现在哪，而不指定文字的具体样式
+# 这也相当于同时定义了所有可用的 translatable
+
+# GUI 相关设置
+gui1:
+  icon:
+    material: enchanted_book
+    name: menu.enchantment.icon.display_name
+    lore:
+      - menu.enchantment.icon.description
+      - general.empty
+      - menu.enchantment.icon.rarity
+      - menu.enchantment.icon.target
+      - menu.enchantment.icon.level
+      - general.empty
+      - menu.enchantment.icon.conflict.title
+      - menu.enchantment.icon.conflict.target
+      - menu.enchantment.icon.charging.title
+      - menu.enchantment.icon.charging.fuel_item
+      - menu.enchantment.icon.charging.consume_amount
+      - menu.enchantment.icon.charging.recharge_amount
+      - menu.enchantment.icon.charging.max_amount
+      - menu.enchantment.icon.obtaining.title
+      - menu.enchantment.icon.obtaining.enchanting
+      - menu.enchantment.icon.obtaining.villager
+      - menu.enchantment.icon.obtaining.loot_generation
+      - menu.enchantment.icon.obtaining.fishing
+      - menu.enchantment.icon.obtaining.mob_spawning
+      - general.empty
+      - menu.action.preview
+  layout:
+    - "# # # # # # # # #"
+    - "# x x x x x # i #"
+    - "# x x x x x # # #"
+    - "# x x x x x # s #"
+    - "# < # # # > # # #"
+    - "# # # # # # # # #"
