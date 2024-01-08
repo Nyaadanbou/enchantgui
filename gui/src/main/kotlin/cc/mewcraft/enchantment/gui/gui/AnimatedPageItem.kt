@@ -15,7 +15,7 @@ abstract class AnimatedPageItem(
     override fun handleClick(clickType: ClickType, player: Player, event: InventoryClickEvent) {
         if ((forward && gui.hasNextPage()) || (!forward && gui.hasPreviousPage())) {
             super.handleClick(clickType, player, event)
-            player.playSound(settings.pageTurnSound)
+            player.playSound(settings.SOUND_PAGE_TURN)
             gui.playAnimation(ColumnAnimation(1, false)) {
                 it is SlotElement.ItemSlotElement && it.item is PreviewItem
             }

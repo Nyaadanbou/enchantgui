@@ -39,7 +39,7 @@ class EnchantMenu
     private val enchantmentLookupInventory = VirtualInventory(1) // The same.
 
     private val gui = PagedGui.items()
-        .setStructure(*settings.guiLayout)
+        .setStructure(*settings.GUI_LAYOUT)
         .addIngredient(
             '#', SimpleItem(
                 ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName(
@@ -63,7 +63,7 @@ class EnchantMenu
         // Filter out all the enchantments that is applicable to the test item.
         compatibilityCheckInventory.setPostUpdateHandler {
             compatibilityCheckInventory[0].generateGuiContent { test: ItemStack ->
-                viewer.playSound(settings.testSound)
+                viewer.playSound(settings.SOUND_TEST)
                 plugin.languages.of("msg_filter_out_applicable")
                     .resolver(Placeholder.component("item", test.displayName()))
                     .send(viewer)
@@ -78,7 +78,7 @@ class EnchantMenu
         // Filter out all the enchantments that present in the test item.
         enchantmentLookupInventory.setPostUpdateHandler {
             enchantmentLookupInventory[0].generateGuiContent { test: ItemStack ->
-                viewer.playSound(settings.testSound)
+                viewer.playSound(settings.SOUND_TEST)
                 plugin.languages.of("msg_filter_out_current")
                     .resolver(Placeholder.component("item", test.displayName()))
                     .send(viewer)
@@ -96,7 +96,7 @@ class EnchantMenu
 
         // Add open sound.
         window.addOpenHandler {
-            viewer.playSound(settings.openSound)
+            viewer.playSound(settings.SOUND_OPEN)
         }
 
         // Return items when gui is closed.
@@ -113,7 +113,7 @@ class EnchantMenu
      */
     private fun UiEnchant.toItem() =
         PreviewItem.withStateChangeHandler(cache[this]) { player, _ ->
-            player.playSound(settings.switchSound)
+            player.playSound(settings.SOUND_SWITCH)
         }
 
 

@@ -3,7 +3,10 @@ package cc.mewcraft.enchantment.gui.gui
 import cc.mewcraft.enchantment.gui.api.Chargeable
 import cc.mewcraft.enchantment.gui.api.UiEnchant
 import cc.mewcraft.enchantment.gui.config.EnchantGuiSettings
-import cc.mewcraft.enchantment.gui.util.*
+import cc.mewcraft.enchantment.gui.util.Lores
+import cc.mewcraft.enchantment.gui.util.Numbers
+import cc.mewcraft.enchantment.gui.util.miniMessage
+import cc.mewcraft.enchantment.gui.util.wrapper
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
@@ -16,8 +19,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * This class provides a function [get] which takes [UiEnchant] as key and returns an array of [ItemProvider].
- * The returned [ItemProvider] then can be used to construct the content of [EnchantMenu] for display purposes.
+ * This class provides a function [get] which takes [UiEnchant] as key and
+ * returns an array of [ItemProvider]. The returned [ItemProvider] then can
+ * be used to construct the content of [EnchantMenu] for display purposes.
  */
 @Singleton
 class EnchantIcons
@@ -33,20 +37,15 @@ class EnchantIcons
         itemProviderCache.getUnchecked(key)
 
     private inner class ItemProviderCacheLoader : CacheLoader<UiEnchant, Array<ItemProvider>>() {
-        @Throws(Exception::class)
         override fun load(enchant: UiEnchant): Array<ItemProvider> {
             val min = enchant.minimumLevel()
             val max = enchant.maximumLevel()
             val states = ArrayList<ItemProvider>(max)
-            val translatable = Component.translatable("asd")
 
             for (level in (min..max)) {
                 // Prepare all the values needed to create the enchantment icon
-//                val displayName = enchant.displayName()[level]?.let { settings.displayNameFormat.replace("<enchantment_display_name>", it) } ?: NULL
-                val displayName = Component.translatable(settings.displayNameFormat)
-                    .args(enchant.displayName()[level]?.miniMessage() ?: Component.empty())
-                val description = (enchant.description()[level]?.toMutableList()
-                    ?: emptyList()).map { Component.translatable("enchantment.description").args(it.miniMessage()) }
+                val displayName = enchant.displayName()[level]?.let { settings.DISPLAY_NAME_FORMAT.replace("<enchantment_display_name>", it) } ?: NULL
+                val description = enchant.description()[level]?.toMutableList() ?: emptyList()
                 val rarity = enchant.rarity().name
                 val targets = enchant.enchantmentTargets()
                     .map { targetTranslator.translate(it) }
@@ -54,7 +53,7 @@ class EnchantIcons
                 val minLevel = enchant.minimumLevel().toString()
                 val maxLevel = enchant.maximumLevel().toString()
 
-                val loreFormat = settings.loreFormat.toMutableList() // This list will be modified multiple times below
+                val loreFormat = settings.LORE_FORMAT.toMutableList() // This list will be modified multiple times below
 
                 // Make the lore that is common to all enchantments
                 Lores.replacePlaceholder("<enchantment_description>", loreFormat, description)
@@ -68,7 +67,7 @@ class EnchantIcons
                     val conflict = enchant.conflict()
                         .chunked(3)
                         .map { chunk -> chunk.map { it.name() }.reduce { e1, e2 -> "$e1, $e2" } }
-                    Lores.replacePlaceholder("<conflict>", loreFormat, settings.loreFormatConflict)
+                    Lores.replacePlaceholder("<conflict>", loreFormat, settings.LORE_FORMAT_CONFLICT)
                     Lores.replacePlaceholder("<enchantment_conflict_list>", loreFormat, conflict)
                 } else {
                     Lores.removePlaceholder("<conflict>", loreFormat, keep = false)
@@ -76,41 +75,28 @@ class EnchantIcons
 
                 // Make the lore that describes charging
                 if (enchant is Chargeable) {
-                    Lores.replacePlaceholder("<charging>", loreFormat, settings.loreFormatCharging)
+                    Lores.replacePlaceholder("<charging>", loreFormat, settings.LORE_FORMAT_CHARGING)
                     Lores.replacePlaceholder("<enchantment_charges_fuel_item>", loreFormat, enchant.fuel)
-                    Lores.replacePlaceholder(
-                        "<enchantment_charges_consume_amount>",
-                        loreFormat,
-                        enchant.fuelConsume[level]?.let { Numbers.format(it.toDouble()) } ?: NULL)
-                    Lores.replacePlaceholder(
-                        "<enchantment_charges_recharge_amount>",
-                        loreFormat,
-                        enchant.fuelRecharge[level]?.let { Numbers.format(it.toDouble()) } ?: NULL)
-                    Lores.replacePlaceholder(
-                        "<enchantment_charges_max_amount>",
-                        loreFormat,
-                        enchant.maximumFuel[level]?.let { Numbers.format(it.toDouble()) } ?: NULL)
+                    Lores.replacePlaceholder("<enchantment_charges_consume_amount>", loreFormat, enchant.fuelConsume[level]?.let { Numbers.format(it.toDouble()) } ?: NULL)
+                    Lores.replacePlaceholder("<enchantment_charges_recharge_amount>", loreFormat, enchant.fuelRecharge[level]?.let { Numbers.format(it.toDouble()) } ?: NULL)
+                    Lores.replacePlaceholder("<enchantment_charges_max_amount>", loreFormat, enchant.maximumFuel[level]?.let { Numbers.format(it.toDouble()) } ?: NULL)
                 } else {
                     Lores.removePlaceholder("<charging>", loreFormat, keep = false)
                 }
 
                 // Make the lore that describes how to obtain it
                 if (loreFormat.contains("<obtaining>")) {
-                    Lores.replacePlaceholder("<obtaining>", loreFormat, settings.loreFormatObtaining)
+                    Lores.replacePlaceholder("<obtaining>", loreFormat, settings.LORE_FORMAT_OBTAINING)
                     replaceOrRemove("<enchantment_obtain_chance_enchanting>", loreFormat, enchant.enchantingChance())
                     replaceOrRemove("<enchantment_obtain_chance_villager>", loreFormat, enchant.villagerTradeChance())
-                    replaceOrRemove(
-                        "<enchantment_obtain_chance_loot_generation>",
-                        loreFormat,
-                        enchant.lootGenerationChance()
-                    )
+                    replaceOrRemove("<enchantment_obtain_chance_loot_generation>", loreFormat, enchant.lootGenerationChance())
                     replaceOrRemove("<enchantment_obtain_chance_fishing>", loreFormat, enchant.fishingChance())
                     replaceOrRemove("<enchantment_obtain_chance_mob_spawning>", loreFormat, enchant.mobSpawningChance())
                 }
 
-                val builder = ItemBuilder(settings.itemMaterial).apply {
-                    this.displayName = displayName.wrapper()
-                    this.lore = loreFormat.miniMessage().wrapper()
+                val builder = ItemBuilder(settings.ITEM_MATERIAL).apply {
+                    this.setDisplayName(displayName.miniMessage().wrapper())
+                    this.setLore(loreFormat.miniMessage().wrapper())
                 }
 
                 states += ItemWrapper(builder.get())
