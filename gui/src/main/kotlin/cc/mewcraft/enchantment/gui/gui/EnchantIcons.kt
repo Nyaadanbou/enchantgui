@@ -3,17 +3,14 @@ package cc.mewcraft.enchantment.gui.gui
 import cc.mewcraft.enchantment.gui.api.Chargeable
 import cc.mewcraft.enchantment.gui.api.UiEnchant
 import cc.mewcraft.enchantment.gui.config.EnchantGuiSettings
-import cc.mewcraft.enchantment.gui.util.*
+import cc.mewcraft.enchantment.gui.util.Lores
+import cc.mewcraft.enchantment.gui.util.Numbers
 import cc.mewcraft.enchantment.gui.util.miniMessage
 import cc.mewcraft.enchantment.gui.util.wrapper
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
-import com.google.common.collect.ListMultimap
-import com.google.common.collect.MultimapBuilder.ListMultimapBuilder
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.ComponentLike
-import net.kyori.adventure.text.TranslatableComponent
+import me.lucko.helper.text3.I18nLore
 import net.kyori.adventure.text.TranslationArgument
 import xyz.xenondevs.invui.item.ItemProvider
 import xyz.xenondevs.invui.item.ItemWrapper
@@ -124,7 +121,7 @@ class EnchantIcons
         // 生成一个 List<TranslatableComponent>
         // 用于设置物品的 lore
 
-        val i18nLore = I18nLore(
+        val i18nLore = I18nLore.format(
             settings.LORE_FORMAT,
         )
 
@@ -151,13 +148,9 @@ class EnchantIcons
         */
 
         i18nLore.arguments("menu.enchantment.icon.display_name", enchant.displayName()[level]!!)
-        i18nLore.argumentsMany("menu.enchantment.icon.description", enchant.description()[level]!!)
+        i18nLore.arguments("menu.enchantment.icon.description", enchant.description()[level]!!)
         i18nLore.arguments("menu.enchantment.icon.rarity", enchant.rarity().name)
-        i18nLore.arguments("menu.enchantment.icon.target") {
-            enchant.enchantmentTargets()
-                .map { targetTranslator.translate(it) }
-                .reduce { t1, t2 -> "$t1, $t2" }
-        }
+        i18nLore.arguments("menu.enchantment.icon.target", enchant.enchantmentTargets().map { targetTranslator.translate(it) }.reduce { t1, t2 -> "$t1, $t2" })
         i18nLore.arguments("menu.enchantment.icon.level", TranslationArgument.numeric(enchant.minimumLevel()), TranslationArgument.numeric(enchant.maximumLevel()))
         i18nLore.argumentsMany("menu.enchantment.icon.conflict.item") {
             enchant.conflict()
