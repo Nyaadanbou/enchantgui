@@ -4,12 +4,12 @@
   "menu.enchantment.layout.previous_page": "上一页",
   "menu.enchantment.layout.next_page": "下一页",
   "menu.enchantment.icon.display_name": "{0}",
-  "menu.enchantment.icon.description": "<gray>{0}",//
+  "menu.enchantment.icon.description": "<gray>{0}",
   "menu.enchantment.icon.rarity": "<#bcff9a>▪ <#ddecee>稀有度: <white>{0}",
   "menu.enchantment.icon.target": "<#bcff9a>▪ <#ddecee>适用于：<#bcff9a>{0}",
   "menu.enchantment.icon.level": "<#bcff9a>▪ <#ddecee>等级：<#bcff9a>{0} <color:#ddecee>-</color> {1}",
   "menu.enchantment.icon.conflict.title": "<#ff9a9a>▪ <b>冲突",
-  "menu.enchantment.icon.conflict.item": "<#ff9a9a> {0}",//
+  "menu.enchantment.icon.conflict.item": "<#ff9a9a> {0}",
   "menu.enchantment.icon.charging.title": "<#d39aff>▪ <b>充能",
   "menu.enchantment.icon.charging.fuel": "<#ddecee>  充能物品：<#d39aff>{0}",
   "menu.enchantment.icon.charging.consume_amount": "<#ddecee>  每次消耗：<#d39aff>-{0}⚡",

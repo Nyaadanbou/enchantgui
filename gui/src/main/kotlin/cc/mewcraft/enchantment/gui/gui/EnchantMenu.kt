@@ -4,10 +4,10 @@ import cc.mewcraft.enchantment.gui.api.UiEnchant
 import cc.mewcraft.enchantment.gui.api.UiEnchantPlugin
 import cc.mewcraft.enchantment.gui.api.UiEnchantProvider
 import cc.mewcraft.enchantment.gui.config.EnchantGuiSettings
-import cc.mewcraft.enchantment.gui.util.miniMessage
-import cc.mewcraft.enchantment.gui.util.translatable
 import cc.mewcraft.enchantment.gui.util.wrapper
+import me.lucko.helper.text3.translatable
 import net.kyori.adventure.key.Key
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -40,13 +40,7 @@ class EnchantMenu
 
     private val gui = PagedGui.items()
         .setStructure(*settings.GUI_LAYOUT)
-        .addIngredient(
-            '#', SimpleItem(
-                ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName(
-                    "".miniMessage().wrapper()
-                )
-            )
-        )
+        .addIngredient('#', SimpleItem(ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName(Component.empty().wrapper)))
         .addIngredient('x', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
         .addIngredient('i', compatibilityCheckInventory)
         .addIngredient('s', enchantmentLookupInventory)
@@ -56,7 +50,7 @@ class EnchantMenu
         .build()
 
     private val window = Window.single()
-        .setTitle("menu.enchantment.title".translatable().wrapper())
+        .setTitle("menu.enchantment.title".translatable.wrapper)
         .setGui(gui)
 
     fun showMenu(viewer: Player) {
@@ -128,8 +122,8 @@ class EnchantMenu
     }
 
     /**
-     * Set the content of the paged gui depending on the receiver item,
-     * where the gui content is aka the current enchantment item list.
+     * Set the content of the paged gui depending on the receiver item, where
+     * the gui content is aka the current enchantment item list.
      */
     private fun ItemStack?.generateGuiContent(generator: (ItemStack) -> List<Item>) {
         val content: List<Item> = if (this != null) {
