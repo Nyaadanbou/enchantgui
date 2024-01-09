@@ -18,8 +18,8 @@ interface UiEnchant : Keyed /* Keyed is used to identify enchantments */ {
 
     // Notes: displayName and description vary depending on the enchantment level.
     // Therefore, these two methods return a map where key is the enchantment level.
-    fun displayName(): Map<Int, String>
-    fun description(): Map<Int, List<String>>
+    fun displayName(): Map<Int, String> // TODO 给定参数 level，返回一个没有 legacy code 的字符串
+    fun description(): Map<Int, List<String>> // TODO 同上
 
     /**
      * Creates mappings to transform certain level to corresponding value.

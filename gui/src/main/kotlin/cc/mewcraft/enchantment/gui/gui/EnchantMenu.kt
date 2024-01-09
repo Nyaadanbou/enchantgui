@@ -50,7 +50,7 @@ class EnchantMenu
         .build()
 
     private val window = Window.single()
-        .setTitle("menu.enchantment.title".translatable.wrapper)
+        .setTitle("menu.enchantment.layout.title".translatable.wrapper)
         .setGui(gui)
 
     fun showMenu(viewer: Player) {

@@ -10,7 +10,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import xyz.xenondevs.inventoryaccess.component.i18n.AdventureComponentLocalizer
 import xyz.xenondevs.inventoryaccess.component.i18n.Languages
 import java.io.IOException
-import java.nio.charset.StandardCharsets
 import javax.inject.Singleton
 
 class EnchantGuiPlugin : UiEnchantPlugin() {
@@ -39,7 +38,7 @@ class EnchantGuiPlugin : UiEnchantPlugin() {
             Languages.getInstance().loadLanguage(
                 "zh_cn",
                 getBundledFile("lang/modding/zh_cn.json"),
-                StandardCharsets.UTF_8
+                Charsets.UTF_8
             )
         } catch (e: IOException) {
             slF4JLogger.error("Failed to load language files", e)

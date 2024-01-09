@@ -18,11 +18,11 @@ class MinecraftEnchantAdapter : UiEnchantAdapter<Enchantment, EnchantmentTarget>
         return true // vanilla enchantments are always available
     }
 
-    override fun adaptEnchantment(rawEnchant: Enchantment): UiEnchant {
+    override fun adaptEnchantment(providedEnchant: Enchantment): UiEnchant {
         TODO()
     }
 
-    override fun adaptEnchantmentTarget(rawTarget: EnchantmentTarget): UiEnchantTarget {
+    override fun adaptEnchantmentTarget(providedTarget: EnchantmentTarget): UiEnchantTarget {
         TODO()
     }
 }

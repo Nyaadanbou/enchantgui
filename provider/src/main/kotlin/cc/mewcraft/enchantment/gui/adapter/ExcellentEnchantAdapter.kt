@@ -2,18 +2,18 @@ package cc.mewcraft.enchantment.gui.adapter
 
 import cc.mewcraft.enchantment.gui.api.*
 import net.kyori.adventure.key.Key
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
-import su.nightexpress.excellentenchants.enchantment.EnchantRegistry
+import su.nightexpress.excellentenchants.api.enchantment.ItemCategory
+import su.nightexpress.excellentenchants.api.enchantment.ObtainType
 import su.nightexpress.excellentenchants.enchantment.impl.ExcellentEnchant
-import su.nightexpress.excellentenchants.enchantment.type.FitItemType
-import su.nightexpress.excellentenchants.enchantment.type.ObtainType
-
+import su.nightexpress.excellentenchants.enchantment.registry.EnchantRegistry
 import javax.inject.Singleton
 
 @Singleton
-class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, FitItemType> {
+class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, ItemCategory> {
     override fun initialize() {
         if (!canInitialize()) {
             return
@@ -27,106 +27,103 @@ class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, FitItemType> 
         return Bukkit.getPluginManager().getPlugin("ExcellentEnchants") != null
     }
 
-    override fun adaptEnchantment(rawEnchant: ExcellentEnchant): UiEnchant {
-        val uiEnchant: UiEnchant = object : UiEnchant {
+    override fun adaptEnchantment(providedEnchant: ExcellentEnchant): UiEnchant {
+        val enchant = object : UiEnchant {
             override fun name(): String {
-                return rawEnchant.displayName
+                return providedEnchant.displayName
             }
 
             override fun displayName(): Map<Int, String> {
-                return levelScale { rawEnchant.getNameFormatted(it) }
+                return levelScale { providedEnchant.getNameFormatted(it) }
             }
 
             override fun description(): Map<Int, List<String>> {
-                return levelScale { rawEnchant.getDescription(it) }
+                return levelScale { providedEnchant.getDescription(it) }
             }
 
             override fun canEnchantment(item: ItemStack): Boolean {
-                return rawEnchant.canEnchantItem(item)
+                return providedEnchant.checkEnchantCategory(item)
             }
 
             override fun enchantmentTargets(): List<UiEnchantTarget> {
-                return rawEnchant.fitItemTypes.map { adaptEnchantmentTarget(it) }
+                return providedEnchant.fitItemTypes.map { adaptEnchantmentTarget(it) }
             }
 
             override fun rarity(): UiEnchantRarity {
-                return UiEnchantRarity(rawEnchant.tier.name, rawEnchant.tier.color)
+                return UiEnchantRarity(providedEnchant.tier.name, NamedTextColor.AQUA /*FIXME 更新适用于MC1.20.4版本的ExcellentEnchants*/)
             }
 
             override fun enchantingChance(): Double {
-                return rawEnchant.getObtainChance(ObtainType.ENCHANTING)
+                return providedEnchant.getObtainChance(ObtainType.ENCHANTING)
             }
 
             override fun villagerTradeChance(): Double {
-                return rawEnchant.getObtainChance(ObtainType.VILLAGER)
+                return providedEnchant.getObtainChance(ObtainType.VILLAGER)
             }
 
             override fun lootGenerationChance(): Double {
-                return rawEnchant.getObtainChance(ObtainType.LOOT_GENERATION)
+                return providedEnchant.getObtainChance(ObtainType.LOOT_GENERATION)
             }
 
             override fun fishingChance(): Double {
-                return rawEnchant.getObtainChance(ObtainType.FISHING)
+                return providedEnchant.getObtainChance(ObtainType.FISHING)
             }
 
             override fun mobSpawningChance(): Double {
-                return rawEnchant.getObtainChance(ObtainType.MOB_SPAWNING)
+                return providedEnchant.getObtainChance(ObtainType.MOB_SPAWNING)
             }
 
             override fun conflict(): List<UiEnchant> {
-                return rawEnchant.conflicts.mapNotNull { UiEnchantProvider[it] }
+                return providedEnchant.conflicts.mapNotNull { UiEnchantProvider[it] }
             }
 
             override fun conflictsWith(other: Enchantment): Boolean {
-                return rawEnchant.conflictsWith(other)
+                return providedEnchant.conflicts.contains(other.key().value())
             }
 
             override fun minimumLevel(): Int {
-                return rawEnchant.startLevel
+                return providedEnchant.startLevel
             }
 
             override fun maximumLevel(): Int {
-                return rawEnchant.maxLevel
+                return providedEnchant.maxLevel
             }
 
             override fun key(): Key {
-                return rawEnchant.key()
+                return providedEnchant.key()
             }
         }
 
         return when {
-            rawEnchant.isChargesEnabled -> Chargeable(
-                uiEnchant,
-                rawEnchant.chargesFuel.item,
-                rawEnchant::getChargesConsumeAmount,
-                rawEnchant::getChargesRechargeAmount,
-                rawEnchant::getChargesMax,
+            providedEnchant.isChargesEnabled -> Chargeable(
+                enchant,
+                providedEnchant.chargesFuel,
+                providedEnchant::getChargesConsumeAmount,
+                providedEnchant::getChargesRechargeAmount,
+                providedEnchant::getChargesMax,
             )
 
-            else -> uiEnchant
+            else -> enchant
         }
     }
 
-    override fun adaptEnchantmentTarget(rawTarget: FitItemType): UiEnchantTarget {
-        return when (rawTarget) {
-            FitItemType.UNIVERSAL -> UiEnchantTarget.ALL
-            FitItemType.HELMET -> UiEnchantTarget.HELMET
-            FitItemType.CHESTPLATE -> UiEnchantTarget.CHESTPLATE
-            FitItemType.LEGGINGS -> UiEnchantTarget.LEGGINGS
-            FitItemType.BOOTS -> UiEnchantTarget.BOOTS
-            FitItemType.ELYTRA -> UiEnchantTarget.ELYTRA
-            FitItemType.WEAPON -> UiEnchantTarget.WEAPON
-            FitItemType.TOOL -> UiEnchantTarget.TOOL
-            FitItemType.ARMOR -> UiEnchantTarget.ARMOR
-            FitItemType.SWORD -> UiEnchantTarget.SWORD
-            FitItemType.TRIDENT -> UiEnchantTarget.TRIDENT
-            FitItemType.AXE -> UiEnchantTarget.AXE
-            FitItemType.BOW -> UiEnchantTarget.BOW
-            FitItemType.CROSSBOW -> UiEnchantTarget.CROSSBOW
-            FitItemType.HOE -> UiEnchantTarget.HOE
-            FitItemType.PICKAXE -> UiEnchantTarget.PICKAXE
-            FitItemType.SHOVEL -> UiEnchantTarget.SHOVEL
-            FitItemType.FISHING_ROD -> UiEnchantTarget.FISHING_ROD
+    override fun adaptEnchantmentTarget(providedTarget: ItemCategory): UiEnchantTarget {
+        return when (providedTarget) {
+            ItemCategory.HELMET -> UiEnchantTarget.HELMET
+            ItemCategory.CHESTPLATE -> UiEnchantTarget.CHESTPLATE
+            ItemCategory.LEGGINGS -> UiEnchantTarget.LEGGINGS
+            ItemCategory.BOOTS -> UiEnchantTarget.BOOTS
+            ItemCategory.ELYTRA -> UiEnchantTarget.ELYTRA
+            ItemCategory.TOOL -> UiEnchantTarget.TOOL
+            ItemCategory.SWORD -> UiEnchantTarget.SWORD
+            ItemCategory.TRIDENT -> UiEnchantTarget.TRIDENT
+            ItemCategory.AXE -> UiEnchantTarget.AXE
+            ItemCategory.BOW -> UiEnchantTarget.BOW
+            ItemCategory.CROSSBOW -> UiEnchantTarget.CROSSBOW
+            ItemCategory.HOE -> UiEnchantTarget.HOE
+            ItemCategory.PICKAXE -> UiEnchantTarget.PICKAXE
+            ItemCategory.SHOVEL -> UiEnchantTarget.SHOVEL
+            ItemCategory.FISHING_ROD -> UiEnchantTarget.FISHING_ROD
         }
     }
 }
