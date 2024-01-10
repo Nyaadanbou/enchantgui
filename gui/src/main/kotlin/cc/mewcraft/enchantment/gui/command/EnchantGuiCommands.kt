@@ -10,7 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 class EnchantGuiCommands
-@Inject constructor(
+@Inject
+constructor(
     private val plugin: UiEnchantPlugin,
 ) : SimpleCommands(plugin) {
     override fun registerCommands() {

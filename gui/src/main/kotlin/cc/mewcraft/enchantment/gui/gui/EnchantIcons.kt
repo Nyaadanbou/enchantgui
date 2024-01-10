@@ -26,7 +26,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class EnchantIcons
-@Inject constructor(
+@Inject
+constructor(
     private val settings: EnchantGuiSettings,
     private val targetTranslator: TargetTranslator,
 ) {

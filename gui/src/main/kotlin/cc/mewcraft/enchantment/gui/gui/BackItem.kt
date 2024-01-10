@@ -10,7 +10,8 @@ import xyz.xenondevs.invui.item.builder.ItemBuilder
 import javax.inject.Inject
 
 class BackItem
-@Inject constructor(
+@Inject
+constructor(
     settings: EnchantGuiSettings,
 ) : AnimatedPageItem(settings, false) {
     override fun getItemProvider(gui: PagedGui<*>): ItemProvider =

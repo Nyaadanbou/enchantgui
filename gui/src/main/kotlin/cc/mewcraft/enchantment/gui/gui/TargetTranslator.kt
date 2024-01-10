@@ -7,7 +7,8 @@ import javax.inject.Singleton
 
 @Singleton
 class TargetTranslator
-@Inject constructor(
+@Inject
+constructor(
     private val plugin: UiEnchantPlugin,
 ) {
     fun translate(target: UiEnchantTarget): String =

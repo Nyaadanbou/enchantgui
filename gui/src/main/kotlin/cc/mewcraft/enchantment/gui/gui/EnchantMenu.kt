@@ -27,7 +27,8 @@ import xyz.xenondevs.invui.window.Window
 import javax.inject.Inject
 
 class EnchantMenu
-@Inject constructor(
+@Inject
+constructor(
     private val cache: EnchantIcons,
     private val plugin: UiEnchantPlugin,
     private val settings: EnchantGuiSettings,
