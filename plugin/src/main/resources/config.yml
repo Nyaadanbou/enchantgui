@@ -9,7 +9,7 @@ sound:
 gui:
   icon:
     material: enchanted_book
-    name: menu.enchantment.icon.display_name
+    name: menu.enchant.icon.display_name
     lore:
       - menu.enchant.icon.description
       - menu.enchant.icon.empty
