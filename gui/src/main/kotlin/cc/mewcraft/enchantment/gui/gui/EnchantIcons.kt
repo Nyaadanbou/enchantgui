@@ -52,8 +52,8 @@ constructor(
 
                 ////// build lore //////
 
-                val lore = I18nLore.format(settings.LORE_FORMAT)
-                lore.register(settings.LORE_FORMAT)
+                val lore = I18nLore.create()
+                lore.append(settings.LORE_FORMAT)
                 lore.arguments("menu.enchantment.icon.description", enchant.description()[level]!!)
                 // lore.arguments("menu.enchantment.icon.rarity", enchant.rarity().name)
                 lore.arguments("menu.enchantment.icon.rarity", enchant.rarity().name.let { Text.decolorize(it) }) // FIXME 更新适用于MC1.20.4版本的ExcellentEnchants
