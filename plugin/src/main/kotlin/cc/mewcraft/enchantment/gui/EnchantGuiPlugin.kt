@@ -6,10 +6,14 @@ import cc.mewcraft.enchantment.gui.command.EnchantGuiCommands
 import cc.mewcraft.spatula.message.Translations
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
+import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.translation.GlobalTranslator
+import net.kyori.adventure.translation.TranslationRegistry
 import xyz.xenondevs.inventoryaccess.component.i18n.AdventureComponentLocalizer
 import xyz.xenondevs.inventoryaccess.component.i18n.Languages
 import java.io.IOException
+import java.util.*
 import javax.inject.Singleton
 
 class EnchantGuiPlugin : UiEnchantPlugin() {
@@ -30,14 +34,16 @@ class EnchantGuiPlugin : UiEnchantPlugin() {
 
         injector = Guice.createInjector(PluginModule())
 
-        // Load message languages
-        languages = injector.getInstance(Translations::class.java)
+        // Load global translations
+        val registry = TranslationRegistry.create(Key.key("mewcraft:enchantgui"))
+        registry.registerAll(Locale.SIMPLIFIED_CHINESE, getBundledFile("lang/zh_cn.properties").toPath(), true)
+        GlobalTranslator.translator().addSource(registry)
 
-        // Load modding languages
+        // Load menu translations
         try {
             Languages.getInstance().loadLanguage(
                 "zh_cn",
-                getBundledFile("lang/modding/zh_cn.json"),
+                getBundledFile("lang/zh_cn.json"),
                 Charsets.UTF_8
             )
         } catch (e: IOException) {

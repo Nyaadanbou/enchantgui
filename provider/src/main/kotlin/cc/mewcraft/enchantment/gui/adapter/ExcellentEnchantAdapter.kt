@@ -32,15 +32,15 @@ class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, ItemCategory>
     override fun adaptEnchant(providedEnchant: ExcellentEnchant): UiEnchant {
         val enchant = object : UiEnchant {
             override fun displayName(): Component {
-                return Text.fromLegacySection(providedEnchant.displayName) // FIXME 更新适用于MC1.20.4版本的ExcellentEnchants
+                return Text.fromLegacySection(providedEnchant.displayName) // FIXME 更新适用于 MC1.20.4 版本的 ExcellentEnchants
             }
 
             override fun displayName(level: Int): Component {
-                return Text.fromLegacySection(providedEnchant.getNameFormatted(level)) // FIXME 更新适用于MC1.20.4版本的ExcellentEnchants
+                return Text.fromLegacySection(providedEnchant.getNameFormatted(level)) // FIXME 更新适用于 MC1.20.4 版本的 ExcellentEnchants
             }
 
             override fun description(level: Int): List<Component> {
-                return providedEnchant.getDescription(level).map { Text.fromLegacySection(it) } // FIXME 更新适用于MC1.20.4版本的ExcellentEnchants
+                return providedEnchant.getDescription(level).map { Text.fromLegacySection(it) } // FIXME 更新适用于 MC1.20.4 版本的 ExcellentEnchants
             }
 
             override fun applicable(item: ItemStack): Boolean {
@@ -52,7 +52,7 @@ class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, ItemCategory>
             }
 
             override fun rarity(): UiEnchantRarity {
-                return UiEnchantRarity(Text.fromLegacySection(providedEnchant.tier.name), NamedTextColor.AQUA) /*FIXME 更新适用于MC1.20.4版本的ExcellentEnchants*/
+                return UiEnchantRarity(Text.fromLegacySection(providedEnchant.tier.name), NamedTextColor.AQUA) /*FIXME 更新适用于 MC1.20.4 版本的 ExcellentEnchants*/
             }
 
             override fun enchantingChance(): Double {

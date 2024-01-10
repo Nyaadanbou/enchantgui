@@ -1,4 +1,4 @@
 package cc.mewcraft.enchantment.gui.api
 
-// TODO
+// TODO implement enchantment sorter
 class UiEnchantSorters

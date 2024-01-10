@@ -16,6 +16,7 @@ import xyz.xenondevs.invui.item.ItemProvider
 import xyz.xenondevs.invui.item.ItemWrapper
 import xyz.xenondevs.invui.item.builder.ItemBuilder
 import java.time.Duration
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,7 +30,6 @@ class EnchantIcons
 @Inject
 constructor(
     private val pluginSettings: EnchantGuiSettings,
-    private val targetTranslator: TargetTranslator,
 ) {
     private val itemProviderCache: LoadingCache<UiEnchant, Array<ItemProvider>> = CacheBuilder.newBuilder()
         .expireAfterAccess(Duration.ofHours(2))
@@ -44,6 +44,7 @@ constructor(
         //  data class(val UiEnchant, val Locale)
 
         override fun load(enchant: UiEnchant): Array<ItemProvider> {
+            val locale = Locale.SIMPLIFIED_CHINESE // FIXME pass the player's locale to here
             val min = enchant.minLevel()
             val max = enchant.maxLevel()
             val states = ArrayList<ItemProvider>(max)
@@ -55,13 +56,18 @@ constructor(
 
                 ////// build lore //////
 
-                val lore = I18nLore.create()
-                lore.append(pluginSettings.LORE_FORMAT)
-                lore.argumentsMany("menu.enchantment.icon.description", enchant.description(level))
-                lore.arguments("menu.enchantment.icon.rarity", enchant.rarity().name)
-                lore.arguments("menu.enchantment.icon.target", enchant.targets().map { targetTranslator.translate(it) }.reduceOrNull { t1, t2 -> "$t1, $t2" } ?: "")
-                lore.arguments("menu.enchantment.icon.level", TranslationArgument.numeric(enchant.minLevel()), TranslationArgument.numeric(enchant.maxLevel()))
-                lore.argumentsMany("menu.enchantment.icon.conflict.item") {
+                val loreBuilder = I18nLore.create()
+                loreBuilder.append(pluginSettings.LORE_FORMAT)
+                loreBuilder.argumentsMany("menu.enchant.icon.description", enchant.description(level))
+                loreBuilder.arguments("menu.enchant.icon.rarity", enchant.rarity().name)
+                loreBuilder.arguments("menu.enchant.icon.target") {
+                    enchant.targets().map {
+                        val key = "menu.enchant.icon.target." + it.name.lowercase()
+                        Component.translatable(key)
+                    }.let { Component.join(JoinConfiguration.commas(true), it) }
+                }
+                loreBuilder.arguments("menu.enchant.icon.level", TranslationArgument.numeric(enchant.minLevel()), TranslationArgument.numeric(enchant.maxLevel()))
+                loreBuilder.argumentsMany("menu.enchant.icon.conflict.item") {
                     enchant.conflicts()
                         .chunked(3)
                         .map { chunk ->
@@ -72,33 +78,37 @@ constructor(
                         }
                 }
                 if (enchant is Chargeable) {
-                    lore.arguments("menu.enchantment.icon.charging.fuel", enchant.fuelName)
-                    lore.arguments("menu.enchantment.icon.conflict.consume_amount", TranslationArgument.numeric(enchant.fuelConsume(level)))
-                    lore.arguments("menu.enchantment.icon.conflict.recharge_amount", TranslationArgument.numeric(enchant.fuelRecharge(level)))
-                    lore.arguments("menu.enchantment.icon.conflict.max_amount", TranslationArgument.numeric(enchant.maximumFuel(level)))
+                    loreBuilder.arguments("menu.enchant.icon.charging.fuel", enchant.fuelName)
+                    loreBuilder.arguments("menu.enchant.icon.conflict.consume_amount", TranslationArgument.numeric(enchant.fuelConsume(level)))
+                    loreBuilder.arguments("menu.enchant.icon.conflict.recharge_amount", TranslationArgument.numeric(enchant.fuelRecharge(level)))
+                    loreBuilder.arguments("menu.enchant.icon.conflict.max_amount", TranslationArgument.numeric(enchant.maximumFuel(level)))
                 }
-                lore.arguments("menu.enchantment.icon.obtaining.enchanting", TranslationArgument.numeric(enchant.enchantingChance()))
-                lore.arguments("menu.enchantment.icon.obtaining.villager", TranslationArgument.numeric(enchant.villagerTradeChance()))
-                lore.arguments("menu.enchantment.icon.obtaining.loot_generation", TranslationArgument.numeric(enchant.lootGenerationChance()))
-                lore.arguments("menu.enchantment.icon.obtaining.fishing", TranslationArgument.numeric(enchant.fishingChance()))
-                lore.arguments("menu.enchantment.icon.obtaining.mob_spawning", TranslationArgument.numeric(enchant.mobSpawningChance()))
+                loreBuilder.arguments("menu.enchant.icon.obtaining.enchanting", TranslationArgument.numeric(enchant.enchantingChance()))
+                loreBuilder.arguments("menu.enchant.icon.obtaining.villager", TranslationArgument.numeric(enchant.villagerTradeChance()))
+                loreBuilder.arguments("menu.enchant.icon.obtaining.loot_generation", TranslationArgument.numeric(enchant.lootGenerationChance()))
+                loreBuilder.arguments("menu.enchant.icon.obtaining.fishing", TranslationArgument.numeric(enchant.fishingChance()))
+                loreBuilder.arguments("menu.enchant.icon.obtaining.mob_spawning", TranslationArgument.numeric(enchant.mobSpawningChance()))
 
-                lore.sanitize("conflict") { enchant.conflicts().isEmpty() }
-                lore.sanitize("charging") { enchant !is Chargeable }
-                lore.sanitize("obtaining.enchanting") { enchant.enchantingChance() <= 0 }
-                lore.sanitize("obtaining.villager") { enchant.villagerTradeChance() <= 0 }
-                lore.sanitize("obtaining.loot_generation") { enchant.lootGenerationChance() <= 0 }
-                lore.sanitize("obtaining.fishing") { enchant.fishingChance() <= 0 }
-                lore.sanitize("obtaining.mob_spawning") { enchant.mobSpawningChance() <= 0 }
+                loreBuilder.sanitize("conflict") { enchant.conflicts().isEmpty() }
+                loreBuilder.sanitize("charging") { enchant !is Chargeable }
+                loreBuilder.sanitize("obtaining.enchanting") { enchant.enchantingChance() <= 0 }
+                loreBuilder.sanitize("obtaining.villager") { enchant.villagerTradeChance() <= 0 }
+                loreBuilder.sanitize("obtaining.loot_generation") { enchant.lootGenerationChance() <= 0 }
+                loreBuilder.sanitize("obtaining.fishing") { enchant.fishingChance() <= 0 }
+                loreBuilder.sanitize("obtaining.mob_spawning") { enchant.mobSpawningChance() <= 0 }
+
+                val lore = loreBuilder.build()
 
                 ////// build item //////
 
                 val builder = ItemBuilder(pluginSettings.ITEM_MATERIAL).apply {
-                    this.setDisplayName(displayName.wrapper)
-                    this.setLore(lore.build().wrapper)
+                    setDisplayName(displayName.wrapper)
+                    setLore(lore.wrapper)
                 }
 
-                states += ItemWrapper(builder.get("zh_cn")) // FIXME pass the player's locale to here
+                // the letter case of the `locale.toString()`
+                // must be exactly the same as file name!
+                states += ItemWrapper(builder.get(locale.toString().lowercase()))
             }
 
             return states.toTypedArray()

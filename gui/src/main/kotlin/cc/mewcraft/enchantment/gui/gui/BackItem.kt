@@ -16,6 +16,6 @@ constructor(
 ) : AnimatedPageItem(settings, false) {
     override fun getItemProvider(gui: PagedGui<*>): ItemProvider =
         ItemBuilder(Material.SPECTRAL_ARROW).apply {
-            displayName = "menu.enchantment.layout.previous_page".translatable.wrapper
+            displayName = "menu.enchant.layout.previous_page".translatable.wrapper
         }
 }

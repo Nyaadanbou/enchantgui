@@ -8,7 +8,6 @@ import cc.mewcraft.enchantment.gui.util.wrapper
 import me.lucko.helper.text3.translatable
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -51,7 +50,7 @@ constructor(
         .build()
 
     private val window = Window.single()
-        .setTitle("menu.enchantment.layout.title".translatable.wrapper)
+        .setTitle("menu.enchant.layout.title".translatable.wrapper)
         .setGui(gui)
 
     fun showMenu(viewer: Player) {
@@ -59,9 +58,7 @@ constructor(
         compatibilityCheckInventory.setPostUpdateHandler {
             compatibilityCheckInventory[0].generateGuiContent { test: ItemStack ->
                 viewer.playSound(settings.SOUND_TEST)
-                plugin.languages.of("msg_filter_out_applicable")
-                    .resolver(Placeholder.component("item", test.displayName()))
-                    .send(viewer)
+                viewer.sendMessage(Component.translatable("enchantgui.chat.filter_out_applicable", test.displayName()))
                 UiEnchantProvider.filter {
                     it.applicable(test)
                 }.map {
@@ -74,9 +71,7 @@ constructor(
         enchantmentLookupInventory.setPostUpdateHandler {
             enchantmentLookupInventory[0].generateGuiContent { test: ItemStack ->
                 viewer.playSound(settings.SOUND_TEST)
-                plugin.languages.of("msg_filter_out_current")
-                    .resolver(Placeholder.component("item", test.displayName()))
-                    .send(viewer)
+                viewer.sendMessage(Component.translatable("enchantgui.chat.filter_out_current", test.displayName()))
                 val itemMeta = test.itemMeta
                 val enchantments: Set<Key> = if (itemMeta is EnchantmentStorageMeta)
                     itemMeta.storedEnchants.keys.map { it.key }.toSet() else
