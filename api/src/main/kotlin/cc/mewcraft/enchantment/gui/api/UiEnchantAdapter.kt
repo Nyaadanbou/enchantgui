@@ -23,6 +23,6 @@ interface UiEnchantAdapter<E, T> {
      */
     fun canInitialize(): Boolean
 
-    fun adaptEnchantment(providedEnchant: E): UiEnchant
-    fun adaptEnchantmentTarget(providedTarget: T): UiEnchantTarget
+    fun adaptEnchant(providedEnchant: E): UiEnchant
+    fun adaptTarget(providedTarget: T): UiEnchantTarget
 }

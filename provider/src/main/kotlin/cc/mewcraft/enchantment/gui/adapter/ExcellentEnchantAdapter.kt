@@ -1,7 +1,9 @@
 package cc.mewcraft.enchantment.gui.adapter
 
 import cc.mewcraft.enchantment.gui.api.*
+import me.lucko.helper.text3.Text
 import net.kyori.adventure.key.Key
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.enchantments.Enchantment
@@ -19,7 +21,7 @@ class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, ItemCategory>
             return
         }
         for (enchant in EnchantRegistry.getRegistered()) {
-            UiEnchantProvider.register(adaptEnchantment(enchant))
+            UiEnchantProvider.register(adaptEnchant(enchant))
         }
     }
 
@@ -27,30 +29,30 @@ class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, ItemCategory>
         return Bukkit.getPluginManager().getPlugin("ExcellentEnchants") != null
     }
 
-    override fun adaptEnchantment(providedEnchant: ExcellentEnchant): UiEnchant {
+    override fun adaptEnchant(providedEnchant: ExcellentEnchant): UiEnchant {
         val enchant = object : UiEnchant {
-            override fun name(): String {
-                return providedEnchant.displayName
+            override fun displayName(): Component {
+                return Text.fromLegacySection(providedEnchant.displayName) // FIXME 更新适用于MC1.20.4版本的ExcellentEnchants
             }
 
-            override fun displayName(): Map<Int, String> {
-                return levelScale { providedEnchant.getNameFormatted(it) }
+            override fun displayName(level: Int): Component {
+                return Text.fromLegacySection(providedEnchant.getNameFormatted(level)) // FIXME 更新适用于MC1.20.4版本的ExcellentEnchants
             }
 
-            override fun description(): Map<Int, List<String>> {
-                return levelScale { providedEnchant.getDescription(it) }
+            override fun description(level: Int): List<Component> {
+                return providedEnchant.getDescription(level).map { Text.fromLegacySection(it) } // FIXME 更新适用于MC1.20.4版本的ExcellentEnchants
             }
 
-            override fun canEnchantment(item: ItemStack): Boolean {
+            override fun applicable(item: ItemStack): Boolean {
                 return providedEnchant.checkEnchantCategory(item)
             }
 
-            override fun enchantmentTargets(): List<UiEnchantTarget> {
-                return providedEnchant.fitItemTypes.map { adaptEnchantmentTarget(it) }
+            override fun targets(): List<UiEnchantTarget> {
+                return providedEnchant.fitItemTypes.map { adaptTarget(it) }
             }
 
             override fun rarity(): UiEnchantRarity {
-                return UiEnchantRarity(providedEnchant.tier.name, NamedTextColor.AQUA /*FIXME 更新适用于MC1.20.4版本的ExcellentEnchants*/)
+                return UiEnchantRarity(Text.fromLegacySection(providedEnchant.tier.name), NamedTextColor.AQUA) /*FIXME 更新适用于MC1.20.4版本的ExcellentEnchants*/
             }
 
             override fun enchantingChance(): Double {
@@ -73,7 +75,7 @@ class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, ItemCategory>
                 return providedEnchant.getObtainChance(ObtainType.MOB_SPAWNING)
             }
 
-            override fun conflict(): List<UiEnchant> {
+            override fun conflicts(): List<UiEnchant> {
                 return providedEnchant.conflicts.mapNotNull { UiEnchantProvider[it] }
             }
 
@@ -81,11 +83,11 @@ class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, ItemCategory>
                 return providedEnchant.conflicts.contains(other.key().value())
             }
 
-            override fun minimumLevel(): Int {
+            override fun minLevel(): Int {
                 return providedEnchant.startLevel
             }
 
-            override fun maximumLevel(): Int {
+            override fun maxLevel(): Int {
                 return providedEnchant.maxLevel
             }
 
@@ -107,7 +109,7 @@ class ExcellentEnchantAdapter : UiEnchantAdapter<ExcellentEnchant, ItemCategory>
         }
     }
 
-    override fun adaptEnchantmentTarget(providedTarget: ItemCategory): UiEnchantTarget {
+    override fun adaptTarget(providedTarget: ItemCategory): UiEnchantTarget {
         return when (providedTarget) {
             ItemCategory.HELMET -> UiEnchantTarget.HELMET
             ItemCategory.CHESTPLATE -> UiEnchantTarget.CHESTPLATE

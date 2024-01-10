@@ -14,15 +14,9 @@ import javax.inject.Singleton
 class MinecraftEnchantAdapter : UiEnchantAdapter<Enchantment, EnchantmentTarget> {
     override fun initialize() {}
 
-    override fun canInitialize(): Boolean {
-        return true // vanilla enchantments are always available
-    }
+    override fun canInitialize(): Boolean = true // vanilla enchantments are always available
 
-    override fun adaptEnchantment(providedEnchant: Enchantment): UiEnchant {
-        TODO()
-    }
+    override fun adaptEnchant(providedEnchant: Enchantment): UiEnchant = TODO()
 
-    override fun adaptEnchantmentTarget(providedTarget: EnchantmentTarget): UiEnchantTarget {
-        TODO()
-    }
+    override fun adaptTarget(providedTarget: EnchantmentTarget): UiEnchantTarget = TODO()
 }

@@ -16,14 +16,9 @@ constructor(
     plugin: UiEnchantPlugin,
 ) {
     val GUI_LAYOUT: Array<String> = plugin.config.getStringList("gui.layout").toTypedArray()
-
     val ITEM_MATERIAL: Material = Material.matchMaterial(plugin.config.getString("gui.icon.material")!!)!!
     val DISPLAY_NAME_FORMAT: String = plugin.config.getString("gui.icon.name")!!
-
     val LORE_FORMAT: List<String> = plugin.config.getStringList("gui.icon.lore")
-    val LORE_FORMAT_CHARGING: List<String> = plugin.config.getStringList("gui.lore.charging")
-    val LORE_FORMAT_CONFLICT: List<String> = plugin.config.getStringList("gui.lore.conflict")
-    val LORE_FORMAT_OBTAINING: List<String> = plugin.config.getStringList("gui.lore.obtaining")
 
     val SOUND_OPEN: Sound = createSound(plugin.config.getString("sound.open"))
     val SOUND_SWITCH: Sound = createSound(plugin.config.getString("sound.switch"))

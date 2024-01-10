@@ -63,7 +63,7 @@ constructor(
                     .resolver(Placeholder.component("item", test.displayName()))
                     .send(viewer)
                 UiEnchantProvider.filter {
-                    it.canEnchantment(test)
+                    it.applicable(test)
                 }.map {
                     it.toItem()
                 }

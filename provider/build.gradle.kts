@@ -2,6 +2,9 @@ dependencies {
     // server
     compileOnly(libs.server.paper)
 
+    // helper
+    compileOnly(libs.helper)
+
     // internal
     compileOnly(project(":enchantgui:api"))
 
