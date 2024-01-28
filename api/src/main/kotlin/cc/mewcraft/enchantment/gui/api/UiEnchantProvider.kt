@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
 object UiEnchantProvider {
 
     private val elements: MutableMap<Key, UiEnchant> = ConcurrentHashMap()
-    private val adapters = Collections.newSetFromMap(ConcurrentHashMap<UiEnchantAdapter<*, *>, Boolean>())
+    private val adapters: MutableSet<UiEnchantAdapter<*, *>> = ConcurrentHashMap.newKeySet()
 
     /**
      * Initializes this provider.
